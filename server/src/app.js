@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 
+const authRoutes = require("./routes/authRoutes");
+
 const app = express();
 
 app.use(
@@ -19,5 +21,7 @@ app.get("/api/health", (req, res) => {
     message: "API is running",
   });
 });
+
+app.use("/api/auth", authRoutes);
 
 module.exports = app;
