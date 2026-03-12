@@ -4,6 +4,7 @@ const morgan = require("morgan");
 
 const authRoutes = require("./routes/authRoutes");
 const postRoutes = require("./routes/postRoutes");
+const commentRoutes = require("./routes/commentRoutes");
 
 const app = express();
 
@@ -25,5 +26,6 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
+app.use("/api", commentRoutes);
 
 module.exports = app;
