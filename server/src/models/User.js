@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+// Defined the User schema with fields for username, email, and password hash, along with validation rules
 const userSchema = new mongoose.Schema(
   {
     username: {
@@ -17,12 +18,14 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
+    // Store the hashed password instead of the plain text password for security
     passwordHash: {
       type: String,
       required: [true, "Password hash is required"],
     },
   },
   {
+    // Enable automatic creation of createdAt and updatedAt timestamps
     timestamps: true,
   },
 );
