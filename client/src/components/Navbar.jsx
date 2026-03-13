@@ -1,8 +1,8 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-// Navbar component that displays navigation links and user information based on authentication status and provides a logout button for
-// authenticated users to log out and navigate back to the login page, while showing login and signup links for unauthenticated users
+// Navbar component with links to the home page, new post page, and my posts page for authenticated users, and login/signup links for unauthenticated users,
+// while also showing the username of the signed-in user and providing a logout button that clears authentication state and redirects to the login page
 function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
@@ -26,9 +26,14 @@ function Navbar() {
             </NavLink>
 
             {isAuthenticated && (
-              <NavLink className="nav-link" to="/posts/new">
-                New Post
-              </NavLink>
+              <>
+                <NavLink className="nav-link" to="/posts/new">
+                  New Post
+                </NavLink>
+                <NavLink className="nav-link" to="/my-posts">
+                  My Posts
+                </NavLink>
+              </>
             )}
           </div>
 

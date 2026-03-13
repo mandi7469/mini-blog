@@ -36,21 +36,24 @@ const createPost = async (req, res) => {
   }
 };
 
-// Get all blog posts - GET /api/posts - public
+// Get all blog posts - GET /api/posts - public, with optional filtering by author using query parameters
 const getAllPosts = async (req, res) => {
   try {
-    // Retrieve all posts from the database, populate the author field to include the username and email,
-    // and sort them by creation date in descending order (newest first)
-    const posts = await Post.find()
+    // Initialize an empty filter object to be used for querying the database.
+    const filter = {};
+    // If req includes an "author" query parameter, add a filter condition to the filter object to only retrieve posts that match the specified author ID.
+    if (req.query.author) {
+      filter.author = req.query.author;
+    }
+    // Retrieve posts from the database based on the constructed filter. Include the username and email of the author, sorted by creation date in descending order (newest first).
+    const posts = await Post.find(filter)
       .populate("author", "username email")
       .sort({ createdAt: -1 });
-    // Return the list of posts along with the total count of posts in the response
+    // Return the list of posts and the count of posts in the response with a 200 OK status
     return res.status(200).json({
-      // The count field indicates the total number of posts returned in the response
       count: posts.length,
       posts,
     });
-    // If any error occurs during the process, catch it and return a 500 Internal Server Error response with the error message
   } catch (error) {
     return res.status(500).json({
       message: error.message,

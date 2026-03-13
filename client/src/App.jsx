@@ -7,11 +7,14 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import NewPostPage from "./pages/NewPostPage";
 import PostDetailPage from "./pages/PostDetailPage";
+import EditPostPage from "./pages/EditPostPage";
+import MyPostsPage from "./pages/MyPostsPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
-// Main application component that sets up routing for the application, wraps the app in an authentication provider, and includes a navigation
-// bar that is displayed on all pages, while defining routes for the home page, login page, signup page, new post page (protected), post detail page,
-// and a catch-all route for 404 Not Found
+// App component that sets up the main application structure, including routing with React Router, authentication context provider, and a navigation
+// bar, while defining routes for the home page, login/signup pages, post detail page, new post page, edit post page, and my posts page, with protected
+// routes for authenticated users and a catch-all route for 404 Not Founds. The component ensures that the navigation bar is displayed on all pages
+// and that the authentication context is available throughout the application for managing user state and access control.
 function App() {
   return (
     <BrowserRouter>
@@ -29,6 +32,24 @@ function App() {
             element={
               <ProtectedRoute>
                 <NewPostPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/posts/:id/edit"
+            element={
+              <ProtectedRoute>
+                <EditPostPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/my-posts"
+            element={
+              <ProtectedRoute>
+                <MyPostsPage />
               </ProtectedRoute>
             }
           />

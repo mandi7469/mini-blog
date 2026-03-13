@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { getPostById } from "../api/postsApi";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { deletePost, getPostById } from "../api/postsApi";
 import {
   createComment,
   deleteComment,
@@ -10,11 +10,12 @@ import { useAuth } from "../context/AuthContext";
 import CommentForm from "../components/CommentForm";
 import CommentList from "../components/CommentList";
 
-// PostDetailPage component that fetches and displays the details of a single blog post along with its comments, allowing authenticated users to add
-// new comments and delete their own comments, while handling loading states and any errors that may occur during API calls for fetching post details,
-// comments, creating comments, and deleting comments, providing a comprehensive view and interaction for a specific blog post.
+// PostDetailPage component that fetches and displays the details of a single blog post, including its comments, while allowing authenticated users to
+// create new comments and delete their own comments, and allowing the post owner to edit or delete the post, while handling loading states and any errors
+// that may occur during API calls. The component also includes confirmation before deleting a post and navigates back to the user's posts page upon deletion.
 function PostDetailPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { user, token, isAuthenticated } = useAuth();
 
   const [post, setPost] = useState(null);
@@ -23,6 +24,7 @@ function PostDetailPage() {
   const [loadingComments, setLoadingComments] = useState(true);
   const [commentSubmitting, setCommentSubmitting] = useState(false);
   const [deleteLoadingId, setDeleteLoadingId] = useState("");
+  const [postDeleting, setPostDeleting] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -74,6 +76,24 @@ function PostDetailPage() {
     }
   };
 
+  const handleDeletePost = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this post?",
+    );
+
+    if (!confirmed) return;
+
+    setPostDeleting(true);
+
+    try {
+      await deletePost(id, token);
+      navigate("/my-posts");
+    } catch (err) {
+      setError(err.message);
+      setPostDeleting(false);
+    }
+  };
+
   if (loadingPost) {
     return <div className="container">Loading post...</div>;
   }
@@ -82,11 +102,34 @@ function PostDetailPage() {
     return <div className="container text-danger">{error}</div>;
   }
 
+  const isOwner = user?._id === post.author?._id;
+
   return (
     <div className="container">
-      <h1>{post.title}</h1>
+      <div className="d-flex justify-content-between align-items-start mb-3 gap-3">
+        <div>
+          <h1>{post.title}</h1>
+          <p className="text-muted mb-0">By {post.author.username}</p>
+        </div>
 
-      <p className="text-muted">By {post.author.username}</p>
+        {isOwner && (
+          <div className="d-flex gap-2">
+            <Link
+              to={`/posts/${post._id}/edit`}
+              className="btn btn-outline-primary"
+            >
+              Edit
+            </Link>
+            <button
+              className="btn btn-outline-danger"
+              onClick={handleDeletePost}
+              disabled={postDeleting}
+            >
+              {postDeleting ? "Deleting..." : "Delete"}
+            </button>
+          </div>
+        )}
+      </div>
 
       <hr />
 
