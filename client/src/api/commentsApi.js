@@ -33,3 +33,22 @@ export const createComment = async (postId, commentData, token) => {
   // If the response is OK, return the data
   return data;
 };
+
+// Helper function to delete a comment by its ID with authentication token for authorization
+export const deleteComment = async (commentId, token) => {
+  // Make a DELETE request to the /api/comments/:id endpoint with the Authorization header containing the token
+  const response = await fetch(`${API_URL}/api/comments/${commentId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await response.json();
+  // Check if the response is not OK (status code outside of 200-299)
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to delete comment");
+  }
+  // If the response is OK, return the data
+  return data;
+};
